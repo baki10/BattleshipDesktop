@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Random;
 
-class BattleShipGui extends JFrame {
+public class BattleShipGui extends JFrame {
 
     private static final String TITLE = "Battle Ship";
     private static final String NEW_GAME = "New game";
