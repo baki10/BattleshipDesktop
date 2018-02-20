@@ -26,18 +26,18 @@ public class Shots {
     }
 
     public Shot getMarkedShot(int x, int y) {
-        for (Shot label : shots) {
-            if (label.getCoordinates().equals(x, y)) {
-                if (!label.isShot()) {
-                    return label;
+        for (Shot marked : shots) {
+            if (marked.getCoordinates().equals(x, y)) {
+                if (!marked.isShot()) {
+                    return marked;
                 }
             }
         }
         return null;
     }
 
-    public void removeMarked(Shot label) {
-        shots.remove(label);
+    public void removeMarked(Shot shot) {
+        shots.remove(shot);
     }
 
     public List<Shot> getShots() {
