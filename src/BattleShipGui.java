@@ -1,13 +1,13 @@
-import model.Cell;
-import model.Ship;
 import model.Ships;
 import model.Shot;
 import model.Shots;
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import java.util.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Random;
 
 class BattleShipGui extends JFrame {
 
@@ -16,9 +16,9 @@ class BattleShipGui extends JFrame {
     private static final String EXIT = "Exit";
     private static final String YOU_WON = "YOU WON!";
     private static final String COMPUTER_WON = "COMPUTER WON!";
-    private static final int FIELD_SIZE = 10;
+    static final int FIELD_SIZE = 10;
     private static final int COMPUTER_PANEL_SIZE = 400;
-    private static final int COMPUTER_CELL_SIZE = COMPUTER_PANEL_SIZE / FIELD_SIZE;
+    static final int COMPUTER_CELL_SIZE = COMPUTER_PANEL_SIZE / FIELD_SIZE;
     private static final int MY_PANEL_SIZE = COMPUTER_PANEL_SIZE / 2;
     private static final int MY_CELL_SIZE = MY_PANEL_SIZE / FIELD_SIZE;
     private static final int MOUSE_BUTTON_LEFT = MouseEvent.BUTTON1;
@@ -26,9 +26,10 @@ class BattleShipGui extends JFrame {
 
     private JTextArea textArea;
     private JPanel computerBoard, myBoard;
-    private Ships computerShips, myShips;
-    private Shots computerShots, myShots;
-    private Random random;
+    private Ships computerShips;
+    private Ships myShips;
+    private Shots computerShots;
+    private Shots myShots;
     private boolean gameOver;
 
     public static void main(String[] args) {
@@ -41,9 +42,9 @@ class BattleShipGui extends JFrame {
         setResizable(false);
 
         // boards
-        computerBoard = new GamePanel(COMPUTER_PANEL_SIZE, COMPUTER_PANEL_SIZE);
+        computerBoard = new GamePanel(COMPUTER_PANEL_SIZE, COMPUTER_PANEL_SIZE, this);
         computerBoard.addMouseListener(computerBoardMouseAdapter());
-        myBoard = new GamePanel(MY_PANEL_SIZE, MY_PANEL_SIZE);
+        myBoard = new GamePanel(MY_PANEL_SIZE, MY_PANEL_SIZE, this);
 
         // buttons
         JButton newGameButton = new JButton(NEW_GAME);
@@ -127,10 +128,10 @@ class BattleShipGui extends JFrame {
         myShots = new Shots(COMPUTER_CELL_SIZE);
         textArea.setText(NEW_GAME);
         gameOver = false;
-        random = new Random();
     }
 
     private void computerShoot() {
+        Random random = new Random();
         int x, y;
         do {
             x = random.nextInt(FIELD_SIZE);
@@ -150,66 +151,19 @@ class BattleShipGui extends JFrame {
         }
     }
 
-    class GamePanel extends JPanel {
-
-        GamePanel(int width, int height) {
-            setPreferredSize(new Dimension(width, height));
-            setBackground(Color.white);
-            setBorder(BorderFactory.createLineBorder(Color.blue));
-        }
-
-        @Override
-        public void paint(Graphics g) {
-            super.paint(g);
-            int cellSize = (int) getSize().getHeight() / BattleShipGui.FIELD_SIZE;
-            g.setColor(Color.lightGray);
-            for (int i = 1; i < BattleShipGui.FIELD_SIZE; i++) {
-                g.drawLine(0, i * cellSize, BattleShipGui.FIELD_SIZE * cellSize, i * cellSize);
-                g.drawLine(i * cellSize, 0, i * cellSize, BattleShipGui.FIELD_SIZE * cellSize);
-            }
-            if (cellSize == BattleShipGui.COMPUTER_CELL_SIZE) {
-                shotsPaint(myShots, g);
-                shipsPaint(computerShips, g);
-            } else {
-                shotsPaint(computerShots, g);
-                shipsPaint(myShips, g);
-            }
-        }
-
-        private void shipsPaint(Ships ships, Graphics g) {
-            if(ships == null){
-                return;
-            }
-            int cellSize = ships.getCellSize();
-            boolean hidden = ships.hidden();
-            for (Ship ship : ships.getShips()) {
-                for (Cell cell : ship.getCells()) {
-                    if (!hidden || cell.isHit()) {
-                        g.setColor(cell.isHit() ? Color.red : Color.lightGray);
-                        int x = cell.getX() * cellSize + 1;
-                        int y = cell.getY() * cellSize + 1;
-                        g.fill3DRect(x, y, cellSize - 2, cellSize - 2, true);
-                    }
-                }
-            }
-        }
-
-        private void shotsPaint(Shots shots, Graphics g) {
-            if(shots == null){
-                return;
-            }
-            g.setColor(Color.black);
-            int size = shots.getCellSize();
-            for (Shot shot : shots.getShots()) {
-                int x = shot.getX() * size + size / 2 - 3;
-                int y = shot.getY() * size + size / 2 - 3;
-                if (shot.isShot()) {
-                    g.fillRect(x, y, 8, 8);
-                } else {
-                    g.drawRect(x, y, 8, 8);
-                }
-            }
-        }
+    public Ships getComputerShips() {
+        return computerShips;
     }
 
+    public Ships getMyShips() {
+        return myShips;
+    }
+
+    public Shots getComputerShots() {
+        return computerShots;
+    }
+
+    public Shots getMyShots() {
+        return myShots;
+    }
 }
