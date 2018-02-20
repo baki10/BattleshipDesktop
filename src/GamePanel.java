@@ -10,11 +10,16 @@ import java.awt.*;
 class GamePanel extends JPanel {
 
     private BattleShipGui game;
+    private static final Color DEFAULT_COLOR = Color.lightGray;
+    private static final Color BORDER_COLOR = Color.black;
+    private static final Color CELL_HIT_COLOR = Color.red;
+    private static final Color CELL_MISSED_COLOR = Color.gray;
+
 
     GamePanel(int width, int height, BattleShipGui game) {
         setPreferredSize(new Dimension(width, height));
         setBackground(Color.white);
-        setBorder(BorderFactory.createLineBorder(Color.blue));
+        setBorder(BorderFactory.createLineBorder(BORDER_COLOR));
         this.game = game;
     }
 
@@ -22,7 +27,7 @@ class GamePanel extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         int cellSize = (int) getSize().getHeight() / BattleShipGui.FIELD_SIZE;
-        g.setColor(Color.lightGray);
+        g.setColor(DEFAULT_COLOR);
         for (int i = 1; i < BattleShipGui.FIELD_SIZE; i++) {
             g.drawLine(0, i * cellSize, BattleShipGui.FIELD_SIZE * cellSize, i * cellSize);
             g.drawLine(i * cellSize, 0, i * cellSize, BattleShipGui.FIELD_SIZE * cellSize);
@@ -45,7 +50,7 @@ class GamePanel extends JPanel {
         for (Ship ship : ships.getShips()) {
             for (Cell cell : ship.getCells()) {
                 if (!hidden || cell.isHit()) {
-                    g.setColor(cell.isHit() ? Color.red : Color.lightGray);
+                    g.setColor(cell.isHit() ? CELL_HIT_COLOR : DEFAULT_COLOR);
                     int x = cell.getX() * cellSize + 1;
                     int y = cell.getY() * cellSize + 1;
                     g.fill3DRect(x, y, cellSize - 2, cellSize - 2, true);
@@ -58,7 +63,7 @@ class GamePanel extends JPanel {
         if (shots == null) {
             return;
         }
-        g.setColor(Color.black);
+        g.setColor(CELL_MISSED_COLOR);
         int size = shots.getCellSize();
         for (Shot shot : shots.getShots()) {
             int x = shot.getX() * size + size / 2 - 3;
